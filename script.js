@@ -121,9 +121,10 @@
     const section = addSection();
     awaitingMedication = true;
     medInput.value=''; pdfInput.value='';
+    pdfInput.required = true;
     const intro = [
       { sender: 'bot', text: 'Olá! Vamos iniciar o processo de renovação da sua receita.' },
-      { sender: 'bot', text: 'Informe abaixo o nome do medicamento que deseja renovar e, se tiver, anexe a receita antiga em PDF usando o clipe.' }
+      { sender: 'bot', text: 'Informe abaixo o nome do medicamento que deseja renovar e anexe a receita antiga em PDF usando o clipe (obrigatório).' }
     ];
     let i=0; function next(){ if(i>=intro.length){ chatBody.scrollTop=chatBody.scrollHeight; return; } renderMessage(section,intro[i++]); chatBody.scrollTop=chatBody.scrollHeight; setTimeout(next,500); } next();
   }
@@ -138,11 +139,23 @@
     const med = medInput.value.trim();
     const file = pdfInput.files[0];
     if(!med){ renderMessage(currentSection, {sender:'bot', text:'Por favor, informe o medicamento para continuar.'}); medInput.focus(); return; }
-    renderMessage(currentSection, {sender:'user', text: med});
-    if(file){
-      const url = URL.createObjectURL(file);
-      renderMessage(currentSection, {sender:'user', text: `Anexei a receita antiga: <a href="${url}" target="_blank" rel="noopener">Ver PDF</a>`});
+    if(!file){
+      renderMessage(currentSection, {sender:'bot', text:'Por favor, anexe a receita antiga em PDF para continuar.'});
+      pdfInput.focus();
+      const attachBtn = document.querySelector('.attach-btn');
+      attachBtn && attachBtn.click();
+      return;
     }
+    if(file.type !== 'application/pdf'){
+      renderMessage(currentSection, {sender:'bot', text:'O arquivo anexado precisa ser um PDF. Selecione a receita antiga em PDF.'});
+      pdfInput.value='';
+      const attachBtn = document.querySelector('.attach-btn');
+      attachBtn && attachBtn.click();
+      return;
+    }
+    renderMessage(currentSection, {sender:'user', text: med});
+    const url = URL.createObjectURL(file);
+    renderMessage(currentSection, {sender:'user', text: `Anexei a receita antiga: <a href="${url}" target="_blank" rel="noopener">Ver PDF</a>`});
     awaitingMedication=false;
     setTimeout(()=>renderMessage(currentSection,{sender:'bot', text:`Obrigado! Vou verificar a possibilidade de renovar a receita para ${med}.`}), 600);
     setTimeout(()=>renderMessage(currentSection,{sender:'bot', text:'Receita renovada com sucesso!'}), 1100);
