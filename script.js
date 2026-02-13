@@ -146,7 +146,7 @@
       attachBtn && attachBtn.click();
       return;
     }
-    if(file.type !== 'application/jpeg'){
+    if(file.type !== 'application/pdf'){
       renderMessage(currentSection, {sender:'bot', text:'O arquivo anexado precisa ser um PDF. Selecione a receita antiga em PDF/IMAGEM.'});
       pdfInput.value='';
       const attachBtn = document.querySelector('.attach-btn');
