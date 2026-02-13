@@ -124,7 +124,7 @@
     pdfInput.required = true;
     const intro = [
       { sender: 'bot', text: 'Olá! Vamos iniciar o processo de renovação da sua receita.' },
-      { sender: 'bot', text: 'Informe abaixo o nome do medicamento que deseja renovar e anexe a receita antiga em PDF usando o clipe (obrigatório).' }
+      { sender: 'bot', text: 'Informe abaixo o nome do medicamento que deseja renovar e anexe a receita antiga em PDF/IMAGEM usando o clipe (obrigatório).' }
     ];
     let i=0; function next(){ if(i>=intro.length){ chatBody.scrollTop=chatBody.scrollHeight; return; } renderMessage(section,intro[i++]); chatBody.scrollTop=chatBody.scrollHeight; setTimeout(next,500); } next();
   }
@@ -140,13 +140,13 @@
     const file = pdfInput.files[0];
     if(!med){ renderMessage(currentSection, {sender:'bot', text:'Por favor, informe o medicamento para continuar.'}); medInput.focus(); return; }
     if(!file){
-      renderMessage(currentSection, {sender:'bot', text:'Por favor, anexe a receita antiga em PDF para continuar.'});
+      renderMessage(currentSection, {sender:'bot', text:'Por favor, anexe a receita antiga em PDF/IMAGEM para continuar.'});
       pdfInput.focus();
       const attachBtn = document.querySelector('.attach-btn');
       attachBtn && attachBtn.click();
       return;
     }
-    if(file.type !== 'application/pdf'){
+    if(file.type !== 'application/jpeg'){
       renderMessage(currentSection, {sender:'bot', text:'O arquivo anexado precisa ser um PDF. Selecione a receita antiga em PDF/IMAGEM.'});
       pdfInput.value='';
       const attachBtn = document.querySelector('.attach-btn');
